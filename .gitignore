@@ -1,2 +1,35 @@
+# Dependencias
 node_modules/
+
+# Variables de entorno (nunca versionar credenciales)
 .env
+.env.*
+!.env.example
+
+# Build / artefactos
+dist/
+build/
+coverage/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Sistema operativo / editores
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# Python (por si aparece algún script auxiliar)
+__pycache__/
+*.py[cod]
+.venv/
+
+# Dumps de base de datos (pueden contener datos reales)
+*.sql.gz
+*.dump

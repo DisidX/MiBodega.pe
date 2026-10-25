@@ -4,14 +4,27 @@ services:
     container_name: mibodega-db
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: root1234
-      MYSQL_DATABASE: mibodega
-      MYSQL_USER: bodega
-      MYSQL_PASSWORD: bodega1234
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?define MYSQL_ROOT_PASSWORD en .env}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-mibodega}
+      MYSQL_USER: ${MYSQL_USER:-bodega}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?define MYSQL_PASSWORD en .env}
+      TZ: ${TZ:-America/Lima}
     ports:
-      - "3306:3306"
+      # Solo accesible desde esta máquina (no expuesto a la red local)
+      - "127.0.0.1:${MYSQL_PORT:-3306}:3306"
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_0900_ai_ci
     volumes:
       - db_data:/var/lib/mysql
+      # Esquema inicial: se ejecuta automáticamente la primera vez
+      - ./backend/db:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u root -p\"$$MYSQL_ROOT_PASSWORD\" --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
 
 volumes:
   db_data:
